@@ -1,11 +1,11 @@
 package view;
 
 import java.util.Optional;
-
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Alert.AlertType;
 
+@SuppressWarnings("restriction")
 public class Alerts {
 
 	protected Alert exitProgramAlert() {
@@ -55,7 +55,7 @@ public class Alerts {
 				+ "\nPlease select the directory containing the files, or create a new directory.", ButtonType.OK,
 				ButtonType.CANCEL);
 		alert.setTitle("No Directory Path");
-		alert.setHeaderText("Unable to locate Fitness Tracker directory");
+		alert.setHeaderText("Unable to locate Test Generator directory");
 		Optional<ButtonType> result = alert.showAndWait();
 
 		if (result.get() == ButtonType.CANCEL) {			

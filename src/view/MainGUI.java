@@ -4,15 +4,11 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-
 import controller.QuestionController;
 import controller.QuizController;
 import controller.ReadAndWrite;
 import controller.UserController;
 import javafx.application.Application;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -21,17 +17,19 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
+import javafx.scene.control.PasswordField;
+import javafx.scene.layout.GridPane;
+import javafx.geometry.HPos;
+import javafx.geometry.Insets;
 
 
+@SuppressWarnings("restriction")
 public class MainGUI extends Application {
 
 	public static final int SCENE_WIDTH = 1280;
@@ -58,24 +56,27 @@ public class MainGUI extends Application {
 	
 	@Override
 	public void start(Stage primaryStage) throws Exception {
-		this.stage = primaryStage;
-		VBox box = new VBox(10);
-		box.getChildren().addAll(createMenuBar());
-		Label label = new Label();
-		label.setText("Testing Application\nBrentonHaliw\nbrenton.haliw@gmail.com\nVersion 1.0\nJuly 24, 2020");
-		this.pane.setTop(box);
-		this.pane.setCenter(loginScreen());
-
 		if (directoryPath == null) {
 			this.alert.directoryPathNotFound();
 			launchDirectoryChooser();
 
 		}
+		
+		if (showLoginScreen()) {
+			this.stage = primaryStage;
+			VBox box = new VBox(10);
+			box.getChildren().addAll(createMenuBar());
+			Label label = new Label();
+			label.setText("Testing Application\nBrentonHaliw\nbrenton.haliw@gmail.com\nVersion 1.0\nJuly 24, 2020");
+			this.pane.setTop(box);
+			this.pane.setCenter(label);
 
-		Scene scene = new Scene(this.pane, SCENE_WIDTH, SCENE_HEIGHT);
-		stage.setTitle("Fitness Application");
-		stage.setScene(scene);
-		stage.show();
+			Scene scene = new Scene(this.pane, SCENE_WIDTH, SCENE_HEIGHT);
+			stage.setTitle("Test Generator");
+			stage.setScene(scene);
+			stage.show();
+		}
+
 
 	}	
 
@@ -112,6 +113,55 @@ public class MainGUI extends Application {
 		});
 
 		return menuBar;
+	}
+	
+	/**
+	 * The login screen is the first screen to appear to the user. The user will enter
+	 * their login information, select their role (user or administrator) and then 
+	 * click login. Their credentials will then be verified against the database.
+	 * @return true if user login information is authenticated, false if not
+	 */
+	private boolean showLoginScreen() {
+		Stage loginStage = new Stage();
+		GridPane gp = new GridPane();
+		gp.setPadding(new Insets(20));
+		gp.setHgap(25);
+		gp.setVgap(15);
+		
+		
+		Label enterInfoLabel = new Label("Please enter your username and password.");
+		Label userNameLabel = new Label("Username");
+		TextField usernameField = new TextField();
+		Label passwordLabel = new Label("Password");
+		PasswordField passwordField = new PasswordField();
+		ChoiceBox<String> choiceBox = new ChoiceBox<>();
+		choiceBox.getItems().addAll("User", "Administrator");
+		choiceBox.getSelectionModel().selectFirst();
+		Button loginButton = new Button("Login");
+		Button createAccount = new Button("Create New Account");
+		Button forgotAccount = new Button("Forgot Account Info");
+		HBox loginBox = new HBox(10);
+		loginBox.getChildren().addAll(choiceBox, loginButton);
+		
+		gp.add(enterInfoLabel, 0, 0, 2, 1);
+		
+		GridPane.setHalignment(userNameLabel, HPos.RIGHT);
+		GridPane.setHalignment(passwordLabel, HPos.RIGHT);
+		GridPane.setHalignment(usernameField, HPos.LEFT);
+		GridPane.setHalignment(passwordField, HPos.LEFT);
+		GridPane.setHalignment(loginBox, HPos.RIGHT);
+		
+		gp.add(userNameLabel, 0, 1);
+		gp.add(passwordLabel, 0, 2);
+		gp.add(usernameField, 1, 1);
+		gp.add(passwordField, 1, 2);
+		gp.add(loginBox, 1, 3);
+		
+		Scene scene = new Scene(gp, 400, 200);
+		loginStage.setScene(scene);
+		loginStage.setTitle("Login");
+		loginStage.show();
+		return true;
 	}
 
 	public void launchDirectoryChooser() {
@@ -152,13 +202,15 @@ public class MainGUI extends Application {
 		
 		HBox passwordBox = new HBox(10);
 		Label passwordLabel = new Label("Password:");
-		TextField passwordField = new TextField();
+		PasswordField passwordField = new PasswordField();
 		passwordBox.getChildren().addAll(passwordLabel, passwordField);
 		passwordBox.setAlignment(Pos.CENTER);
 		
 		HBox choiceAndLogin = new HBox(10);
 		ChoiceBox<String> choiceBox = new ChoiceBox<>();
-		Button loginButton = new Button("Log In");
+		choiceBox.getItems().addAll("User", "Administrator");
+		choiceBox.getSelectionModel().selectFirst();
+		Button loginButton = new Button("Login");
 		choiceAndLogin.getChildren().addAll(choiceBox, loginButton);
 		choiceAndLogin.setAlignment(Pos.CENTER);
 		
