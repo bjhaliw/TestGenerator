@@ -12,12 +12,14 @@ import model.User;
 
 public class UserController {
 
-	public static String userDatabase;
 	private HashMap<String, User> users;
 
-	public UserController(HashMap<String, User> users, String path) {
+	public UserController(HashMap<String, User> users) {
 		this.users = users;
-		userDatabase = path;
+	}
+	
+	public UserController() {
+		this.users = new HashMap<>();
 	}
 	
 	public User getUser(String name) {
@@ -28,6 +30,10 @@ public class UserController {
 			return null;
 		}
 	} 
+	
+	public HashMap<String, User> getUsers() {
+		return this.users;
+	}
 
 	/**
 	 * Creates a user to be added to the database.
@@ -40,7 +46,7 @@ public class UserController {
 	public boolean createUser(String name, String password, ArrayList<String> roles)
 			throws UnsupportedEncodingException {
 
-		String encryptedPassword = encryptThisString(password);
+		String encryptedPassword = encryptThisString(password); // Issue from loading already encrypted password
 		User user = new User(name, encryptedPassword, new ArrayList<Test>(), roles);
 		if (users.containsKey(name)) {
 			System.out.println(name + " already exists in the database.");
@@ -117,7 +123,7 @@ public class UserController {
 			throws UnsupportedEncodingException {
 		if (users.containsKey(username)) {
 			User user = users.get(username);
-			String encryptedString = encryptThisString(password);
+			String encryptedString = encryptThisString(encryptThisString(password)); // Try to find a fix for encrypting twice?
 			if (encryptedString.equals(user.getPassword())) {
 				if (user.getRoles().contains(role)) {
 					System.out.println("Login successful!");

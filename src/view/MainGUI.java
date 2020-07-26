@@ -2,14 +2,14 @@ package view;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import controller.QuestionController;
-import controller.QuizController;
+import controller.TestController;
 import controller.ReadAndWrite;
 import controller.UserController;
 import javafx.application.Application;
-import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
@@ -28,32 +28,31 @@ import javafx.scene.layout.GridPane;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 
-
 @SuppressWarnings("restriction")
 public class MainGUI extends Application {
 
 	public static final int SCENE_WIDTH = 1280;
 	public static final int SCENE_HEIGHT = 800;
 	public static String directoryPath;
-	
+
 	Stage stage;
 	BorderPane pane;
 	Alerts alert;
-	QuizController quizController;
+	TestController testController;
 	QuestionController questionController;
 	UserController userController;
 	ReadAndWrite readAndWrite;
-	
+
 	public MainGUI() {
 		stage = new Stage();
 		pane = new BorderPane();
 		alert = new Alerts();
-		quizController = new QuizController();
+		testController = new TestController();
 		questionController = new QuestionController();
-		//userController = new UserController();
-		readAndWrite = new ReadAndWrite();
+		userController = new UserController();
+		readAndWrite = new ReadAndWrite(userController);
 	}
-	
+
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		if (directoryPath == null) {
@@ -62,23 +61,23 @@ public class MainGUI extends Application {
 
 		}
 		
-		if (showLoginScreen()) {
-			this.stage = primaryStage;
-			VBox box = new VBox(10);
-			box.getChildren().addAll(createMenuBar());
-			Label label = new Label();
-			label.setText("Testing Application\nBrentonHaliw\nbrenton.haliw@gmail.com\nVersion 1.0\nJuly 24, 2020");
-			this.pane.setTop(box);
-			this.pane.setCenter(label);
+		readAndWrite.setMainPath(directoryPath);
+		readAndWrite.loadUserDatabase();
 
-			Scene scene = new Scene(this.pane, SCENE_WIDTH, SCENE_HEIGHT);
-			stage.setTitle("Test Generator");
-			stage.setScene(scene);
-			stage.show();
-		}
+		this.stage = primaryStage;
+		VBox box = new VBox(10);
+		box.getChildren().addAll(createMenuBar());
+		Label label = new Label();
+		label.setText("Testing Application\nBrentonHaliw\nbrenton.haliw@gmail.com\nVersion 1.0\nJuly 24, 2020");
+		this.pane.setTop(box);
+		this.pane.setCenter(label);
 
-
-	}	
+		Scene scene = new Scene(this.pane, SCENE_WIDTH, SCENE_HEIGHT);
+		stage.setTitle("Test Generator");
+		stage.setScene(scene);
+		stage.show();
+		showLoginScreen();
+	}
 
 	public MenuBar createMenuBar() {
 		MenuBar menuBar = new MenuBar();
@@ -86,7 +85,7 @@ public class MainGUI extends Application {
 		Menu file = new Menu("File");
 		MenuItem save = new MenuItem("Save");
 		MenuItem saveAs = new MenuItem("Save As...");
-		
+
 		Menu edit = new Menu("Edit");
 		MenuItem exit = new MenuItem("Exit");
 		MenuItem editGUI = new MenuItem("Edit GUI");
@@ -114,21 +113,22 @@ public class MainGUI extends Application {
 
 		return menuBar;
 	}
-	
+
 	/**
-	 * The login screen is the first screen to appear to the user. The user will enter
-	 * their login information, select their role (user or administrator) and then 
-	 * click login. Their credentials will then be verified against the database.
+	 * The login screen is the first screen to appear to the user. The user will
+	 * enter their login information, select their role (user or administrator) and
+	 * then click login. Their credentials will then be verified against the
+	 * database.
+	 * 
 	 * @return true if user login information is authenticated, false if not
 	 */
-	private boolean showLoginScreen() {
+	private void showLoginScreen() {
 		Stage loginStage = new Stage();
 		GridPane gp = new GridPane();
 		gp.setPadding(new Insets(20));
 		gp.setHgap(25);
 		gp.setVgap(15);
-		
-		
+
 		Label enterInfoLabel = new Label("Please enter your username and password.");
 		Label userNameLabel = new Label("Username");
 		TextField usernameField = new TextField();
@@ -142,26 +142,42 @@ public class MainGUI extends Application {
 		Button forgotAccount = new Button("Forgot Account Info");
 		HBox loginBox = new HBox(10);
 		loginBox.getChildren().addAll(choiceBox, loginButton);
-		
+
 		gp.add(enterInfoLabel, 0, 0, 2, 1);
-		
+
 		GridPane.setHalignment(userNameLabel, HPos.RIGHT);
 		GridPane.setHalignment(passwordLabel, HPos.RIGHT);
 		GridPane.setHalignment(usernameField, HPos.LEFT);
 		GridPane.setHalignment(passwordField, HPos.LEFT);
 		GridPane.setHalignment(loginBox, HPos.RIGHT);
-		
+
 		gp.add(userNameLabel, 0, 1);
 		gp.add(passwordLabel, 0, 2);
 		gp.add(usernameField, 1, 1);
 		gp.add(passwordField, 1, 2);
 		gp.add(loginBox, 1, 3);
-		
+
+		loginButton.setOnAction(e -> {
+			String username = usernameField.getText();
+			String password = passwordField.getText();
+			String role = choiceBox.getValue();
+
+			try {
+				if (userController.authenticateUserLogin(username, password, role)) {
+					loginStage.close();
+				} else {
+					alert.loginFailedAlert();
+				}
+			} catch (UnsupportedEncodingException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		});
+
 		Scene scene = new Scene(gp, 400, 200);
 		loginStage.setScene(scene);
 		loginStage.setTitle("Login");
 		loginStage.show();
-		return true;
 	}
 
 	public void launchDirectoryChooser() {
@@ -188,42 +204,6 @@ public class MainGUI extends Application {
 			}
 		}
 
-	}
-	
-	public VBox loginScreen() {
-		VBox mainVBox = new VBox(10);
-		mainVBox.setAlignment(Pos.CENTER);
-		
-		HBox userNameBox = new HBox(10);
-		Label userNameLabel = new Label("User Name:");
-		TextField userNameField = new TextField();
-		userNameBox.getChildren().addAll(userNameLabel, userNameField);
-		userNameBox.setAlignment(Pos.CENTER);
-		
-		HBox passwordBox = new HBox(10);
-		Label passwordLabel = new Label("Password:");
-		PasswordField passwordField = new PasswordField();
-		passwordBox.getChildren().addAll(passwordLabel, passwordField);
-		passwordBox.setAlignment(Pos.CENTER);
-		
-		HBox choiceAndLogin = new HBox(10);
-		ChoiceBox<String> choiceBox = new ChoiceBox<>();
-		choiceBox.getItems().addAll("User", "Administrator");
-		choiceBox.getSelectionModel().selectFirst();
-		Button loginButton = new Button("Login");
-		choiceAndLogin.getChildren().addAll(choiceBox, loginButton);
-		choiceAndLogin.setAlignment(Pos.CENTER);
-		
-		HBox accountInfoBox = new HBox(10);
-		Button createAccount = new Button("Create New Account");
-		Button forgotAccount = new Button("Forgot Account Info");
-		accountInfoBox.getChildren().addAll(createAccount, forgotAccount);
-		accountInfoBox.setAlignment(Pos.CENTER);
-		
-		mainVBox.getChildren().addAll(userNameBox, passwordBox, choiceAndLogin, accountInfoBox);
-		
-		return mainVBox;
-		
 	}
 
 	public static void main(String[] args) {

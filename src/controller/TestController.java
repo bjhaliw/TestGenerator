@@ -4,7 +4,7 @@ import java.util.HashMap;
 
 import model.Test;
 
-public class QuizController {
+public class TestController {
 
 	// Create and Modify Quizzes
 	// Add and Modify Test Bank items

@@ -22,34 +22,21 @@ public class Alerts {
 		return alert;
 	}
 	
-	protected Alert negativeRepsAlert() {
-		Alert alert = new Alert(AlertType.INFORMATION, "You must enter a positive number for the amount of reps done.", ButtonType.YES,
+	protected Alert loginFailedAlert() {
+		Alert alert = new Alert(AlertType.INFORMATION, "Login information was not correct.\nPlease verify user login details.", ButtonType.OK,
 				ButtonType.CANCEL);
-		alert.setTitle("Negative Reps");
-		alert.setHeaderText("Cannot have a negative number for reps.");
+		alert.setTitle("Incorrect Login");
+		alert.setHeaderText("Login failed");
 		Optional<ButtonType> result = alert.showAndWait();
 
-		if (result.get() == ButtonType.YES) {
-			System.exit(0);
+		if (result.get() == ButtonType.OK) {
+			alert.close();
 		}
 
 		return alert;
 	}
 	
-	protected Alert negativeWeightAlert() {
-		Alert alert = new Alert(AlertType.INFORMATION, "You must enter a positive number for the amount of weight used.", ButtonType.YES,
-				ButtonType.CANCEL);
-		alert.setTitle("Negative Weight");
-		alert.setHeaderText("Cannot have a negative number for weight.");
-		Optional<ButtonType> result = alert.showAndWait();
 
-		if (result.get() == ButtonType.YES) {
-			System.exit(0);
-		}
-
-		return alert;
-	}
-	
 	protected Alert directoryPathNotFound() {
 		Alert alert = new Alert(AlertType.INFORMATION, "Unable to find the directory containing the testing files"
 				+ "\nPlease select the directory containing the files, or create a new directory.", ButtonType.OK,
