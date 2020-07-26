@@ -2,13 +2,13 @@ package controller;
 
 import java.util.HashMap;
 
-import model.Quiz;
+import model.Test;
 
 public class QuizController {
 
 	// Create and Modify Quizzes
-	// Add and Modify Quiz Bank items
-	HashMap<String, Quiz> quizMap;
+	// Add and Modify Test Bank items
+	HashMap<String, Test> quizMap;
 	
 	
 

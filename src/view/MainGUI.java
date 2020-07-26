@@ -50,7 +50,7 @@ public class MainGUI extends Application {
 		alert = new Alerts();
 		quizController = new QuizController();
 		questionController = new QuestionController();
-		userController = new UserController();
+		//userController = new UserController();
 		readAndWrite = new ReadAndWrite();
 	}
 	

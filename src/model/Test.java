@@ -9,7 +9,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author Brenton Haliw
  *
  */
-public class Quiz {
+public class Test {
 	
 	private static AtomicInteger uniqueID = new AtomicInteger();
 
@@ -20,7 +20,7 @@ public class Quiz {
 	private String quizName; // The name of the quiz
 	private String userName; // Name of the quiz taker
 
-	public Quiz(double totalPoints, double earnedPoints, ArrayList<Question> questions, String quizName,
+	public Test(double totalPoints, double earnedPoints, ArrayList<Question> questions, String quizName,
 			String userName) {
 		super();
 		this.quizID = uniqueID.incrementAndGet();

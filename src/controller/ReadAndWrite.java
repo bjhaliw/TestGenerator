@@ -3,7 +3,7 @@ package controller;
 import java.util.HashMap;
 
 import model.Question;
-import model.Quiz;
+import model.Test;
 import model.User;
 import view.MainGUI;
 
@@ -15,7 +15,7 @@ public class ReadAndWrite {
 	public static String questionDatabase = directoryPath + "/questions.xls"; // The file containing question information
 	
 	private HashMap<String, User> users;
-	private HashMap<Integer, Quiz> tests;
+	private HashMap<Integer, Test> tests;
 	private HashMap<Integer, Question> questions;
 	
 	
@@ -31,7 +31,7 @@ public class ReadAndWrite {
 		
 	}
 	
-	public HashMap<Integer, Quiz> loadTestDatabase() {
+	public HashMap<Integer, Test> loadTestDatabase() {
 		return tests;
 	}
 	
