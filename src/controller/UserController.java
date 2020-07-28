@@ -46,7 +46,7 @@ public class UserController {
 	public boolean createUser(String name, String password, ArrayList<String> roles)
 			throws UnsupportedEncodingException {
 
-		String encryptedPassword = encryptThisString(password); // Issue from loading already encrypted password
+		String encryptedPassword = encryptString(password); // Issue from loading already encrypted password
 		User user = new User(name, encryptedPassword, new ArrayList<Test>(), roles);
 		if (users.containsKey(name)) {
 			System.out.println(name + " already exists in the database.");
@@ -78,7 +78,7 @@ public class UserController {
 	 * @return encrypted string
 	 * @throws UnsupportedEncodingException
 	 */
-	private String encryptThisString(String input) throws UnsupportedEncodingException {
+	private String encryptString(String input) throws UnsupportedEncodingException {
 		try {
 			// getInstance() method is called with algorithm SHA-1
 			MessageDigest md = MessageDigest.getInstance("SHA-1");
@@ -123,7 +123,7 @@ public class UserController {
 			throws UnsupportedEncodingException {
 		if (users.containsKey(username)) {
 			User user = users.get(username);
-			String encryptedString = encryptThisString(encryptThisString(password)); // Try to find a fix for encrypting twice?
+			String encryptedString = encryptString(encryptString(password)); // Try to find a fix for encrypting twice?
 			if (encryptedString.equals(user.getPassword())) {
 				if (user.getRoles().contains(role)) {
 					System.out.println("Login successful!");

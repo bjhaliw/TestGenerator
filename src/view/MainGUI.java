@@ -157,6 +157,7 @@ public class MainGUI extends Application {
 		gp.add(passwordField, 1, 2);
 		gp.add(loginBox, 1, 3);
 
+		
 		loginButton.setOnAction(e -> {
 			String username = usernameField.getText();
 			String password = passwordField.getText();
